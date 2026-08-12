@@ -1,0 +1,604 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>XAUUSD RADAR — Realtime</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#07100f; --card:#0d1b19; --muted:#74877f; --accent:#d8e85b;
+  --buy:#6bc957; --sell:#db5c50; --wait:#c8a943;
+  font-family:Inter,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:#edf5f1}
+.wrap{max-width:1100px;margin:18px auto;padding:0 12px}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.logo{font-weight:800;font-size:20px}
+.logo span{color:var(--accent)}
+.controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn{background:#0b1816;border:1px solid #20332f;color:#edf5f1;padding:8px 10px;border-radius:8px;cursor:pointer}
+.btn.ghost{background:transparent;border:1px solid #294036;color:#a8cbb8}
+input,select,textarea{background:#071714;border:1px solid #23332e;color:#e6efe8;padding:8px;border-radius:8px}
+.card{background:var(--card);border:1px solid #20332f;border-radius:12px;padding:14px;margin-bottom:12px}
+.grid{display:grid;grid-template-columns:1.6fr .9fr;gap:12px}
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
+.toprow{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.symbol{font-weight:900;font-size:28px}
+.live{font-size:12px;color:#65db87}
+.muted{color:var(--muted);font-size:13px}
+.price{font-size:40px;font-weight:900;margin:8px 0}
+.sig{display:inline-block;padding:8px 12px;border-radius:18px;font-weight:800}
+.sig.buy{background:#123b28;color:var(--buy)}
+.sig.sell{background:#421f1e;color:#ff827a}
+.sig.wait{background:#3d341b;color:var(--wait)}
+.metrics{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+.metric{background:#0c1b14;padding:8px;border-radius:8px;min-width:110px}
+.metric .label{font-size:11px;color:var(--muted)}
+.metric .value{font-weight:800;font-size:16px;margin-top:6px}
+.canvas-wrap{height:250px;background:#081616;border-radius:8px;padding:8px;margin-top:8px}
+.small{font-size:12px;color:var(--muted)}
+.form-row{display:flex;gap:8px;align-items:center;margin-top:8px}
+.stack{display:flex;flex-direction:column;gap:8px}
+.side-list{display:flex;flex-direction:column;gap:8px}
+textarea{min-height:80px}
+.footer{color:#687a75;font-size:12px;margin-top:8px}
+.row{display:flex;gap:8px;align-items:center}
+.hidden{display:none}
+.file-input{display:inline-block}
+.note{font-size:12px;color:var(--muted);margin-top:8px}
+</style>
+
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="header">
+    <div class="logo">XAU<span>RADAR</span> · Realtime</div>
+
+    <div class="controls">
+      <div class="live" id="clock">● LIVE</div>
+      <button class="btn" id="toggleLive">Pause</button>
+      <button class="btn ghost" id="manualRefresh">Refresh</button>
+      <button class="btn ghost" id="resetHistory">Reset history</button>
+      <button class="btn ghost" id="exportCsv">Export CSV</button>
+      <label class="btn ghost file-input">
+        Import CSV
+        <input id="importCsv" type="file" accept=".csv" style="display:none" />
+      </label>
+    </div>
+  </div>
+
+  <div class="grid">
+
+    <main>
+      <div class="card">
+        <div class="toprow">
+          <div>
+            <div class="symbol">XAUUSD</div>
+            <div class="muted">Gold Spot · US Dollar</div>
+          </div>
+
+          <div style="text-align:right">
+            <div id="signal" class="sig wait">WAIT</div>
+            <div class="small" id="status">Connecting...</div>
+          </div>
+        </div>
+
+        <div class="price" id="price">$--.--</div>
+
+        <div class="metrics">
+          <div class="metric">
+            <div class="label">RADAR SCORE</div>
+            <div class="value" id="score">-- / 100</div>
+          </div>
+          <div class="metric">
+            <div class="label">RSI 14</div>
+            <div class="value" id="rsi">--</div>
+          </div>
+          <div class="metric">
+            <div class="label">Volatility</div>
+            <div class="value" id="vol">--</div>
+          </div>
+          <div class="metric">
+            <div class="label">Datapoints</div>
+            <div class="value" id="dp">0</div>
+          </div>
+          <div class="metric">
+            <div class="label">Last update</div>
+            <div class="value" id="last">--</div>
+          </div>
+        </div>
+
+        <div class="canvas-wrap">
+          <canvas id="chart"></canvas>
+        </div>
+
+        <div class="form-row">
+          <div style="flex:1">
+            <div class="small">Endpoint API (CORS required). Exemplu: https://api.example.com/xau?apikey=YOUR_KEY</div>
+            <input id="apiUrl" placeholder="API URL (use {apikey} or supply key below)" />
+          </div>
+
+          <div style="width:220px">
+            <div class="small">API Key (opțional)</div>
+            <input id="apiKey" placeholder="API key" />
+            <div style="margin-top:6px">
+              <label><input type="checkbox" id="useHeader" /> Folosește header Authorization: Bearer</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="note">
+          Pagina detectează automat câteva formate comune de răspuns JSON (price, rates.USD, primul element price din array). Dacă folosești goldapi.io sau metals-api.com pune URL-ul corect și cheia.
+        </div>
+
+      </div>
+
+      <div class="card">
+        <div class="muted">Radar reasoning</div>
+        <div id="reasons" class="stack">
+          <div class="small">Se colectează date...</div>
+        </div>
+      </div>
+
+    </main>
+
+    <aside>
+      <div class="card">
+        <div class="muted">Config & Tools</div>
+
+        <div style="margin-top:8px" class="stack">
+          <div class="small">Update interval (s)</div>
+          <input id="interval" type="number" min="1" value="5" />
+
+          <div class="small">Timeout fetch (ms)</div>
+          <input id="timeout" type="number" min="1000" value="8000" />
+
+          <div class="small">Max history points</div>
+          <input id="maxPoints" type="number" min="50" value="2000" />
+
+          <div class="small">Last raw response</div>
+          <textarea id="lastRaw" readonly></textarea>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="muted">Actions</div>
+        <div style="margin-top:8px" class="stack">
+          <button class="btn" id="applyConfig">Apply config</button>
+          <button class="btn ghost" id="clearConfig">Clear config</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="muted">Quick info</div>
+        <div class="side-list">
+          <div class="small">Pagina rulează în modul client — dacă API nu oferă CORS, folosește un proxy sau hostează backend.</div>
+          <div class="small">Pentru goldapi.io: endpointul tipic returnează { price: 1950.12 }</div>
+          <div class="small">Pentru metals-api.com: răspunsul poate conține rates.USD — codul încearcă și această formă.</div>
+        </div>
+      </div>
+
+    </aside>
+
+  </div>
+
+  <div class="footer">
+    XAU Radar — instrument tehnic experimental. Nu este consiliere financiară.
+  </div>
+
+</div>
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+/*
+  Realtime XAUUSD client.
+  - Configurabil endpoint + key
+  - Robust fetch cu timeout + backoff
+  - Chart + history in localStorage
+  - Export/Import CSV
+  - Fallback la ultimul preț când API cade
+  - Comentarii în română
+*/
+
+/* -----------------------
+   Utilitare & config
+   ----------------------- */
+
+const $ = id => document.getElementById(id);
+
+function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
+function fmtPrice(x){ return Number(x).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function nowISO(){ return new Date().toLocaleString(); }
+function csvEscape(s){ return '"'+String(s).replace(/"/g,'""')+'"'; }
+
+/* Default config */
+const DEFAULT = {
+  // Public endpoint that often works for gold spot data; fallback if you set your own
+  apiUrl: "https://data-asg.goldprice.org/dbXRates/USD",
+  apiKey: "",
+  useHeader: false,
+  intervalSec: 5,
+  timeoutMs: 8000,
+  maxPoints: 2000
+};
+
+/* Load config from localStorage */
+function saveConfig(c){
+  localStorage.setItem('xau_cfg', JSON.stringify(c));
+}
+function loadConfig(){
+  try{
+    const raw = localStorage.getItem('xau_cfg');
+    if(!raw) return {...DEFAULT};
+    const parsed = JSON.parse(raw);
+    return Object.assign({}, DEFAULT, parsed);
+  }catch(e){
+    console.warn('cfg parse error',e);
+    return {...DEFAULT};
+  }
+}
+
+let CONFIG = loadConfig();
+
+/* Price history (array of {t:timestamp, price:number}) */
+let priceHistory = (function(){
+  try{
+    const raw = localStorage.getItem('xau_price_history');
+    if(!raw) return [];
+    const parsed = JSON.parse(raw);
+    if(Array.isArray(parsed)) return parsed;
+    return [];
+  }catch(e){
+    console.warn('history parse failed',e);
+    return [];
+  }
+})();
+
+function saveHistory(){
+  try{
+    localStorage.setItem('xau_price_history', JSON.stringify(priceHistory));
+  }catch(e){
+    console.warn('saveHistory failed',e);
+  }
+}
+
+/* -----------------------
+   DOM bindings
+   ----------------------- */
+
+const elStatus = $('status');
+const elPrice = $('price');
+const elScore = $('score');
+const elRsi = $('rsi');
+const elVol = $('vol');
+const elDp = $('dp');
+const elLast = $('last');
+const elSignal = $('signal');
+const elReasons = $('reasons');
+const elLastRaw = $('lastRaw');
+
+$('apiUrl').value = CONFIG.apiUrl;
+$('apiKey').value = CONFIG.apiKey;
+$('useHeader').checked = CONFIG.useHeader;
+$('interval').value = CONFIG.intervalSec;
+$('timeout').value = CONFIG.timeoutMs;
+$('maxPoints').value = CONFIG.maxPoints;
+
+/* Clock */
+function clock(){
+  $('clock').innerText = ' · ' + new Date().toLocaleTimeString();
+}
+setInterval(clock,1000);
+clock();
+
+/* -----------------------
+   Chart setup (Chart.js)
+   ----------------------- */
+
+const ctx = $('chart').getContext('2d');
+let chart = new Chart(ctx, {
+  type:'line',
+  data:{
+    labels: priceHistory.map(p=>new Date(p.t)),
+    datasets:[{
+      label:'XAUUSD',
+      data: priceHistory.map(p=>p.price),
+      borderColor:'#6bc957',
+      backgroundColor:'rgba(107,201,87,0.06)',
+      pointRadius:0,
+      borderWidth:2,
+      tension:0.15
+    }]
+  },
+  options:{
+    animation:false,
+    maintainAspectRatio:false,
+    scales:{
+      x:{ type:'time', time:{unit:'minute', tooltipFormat:'HH:mm:ss'} },
+      y:{
+        ticks:{color:'#dfefe7'},
+        grid:{color:'rgba(20,40,35,0.6)'}
+      }
+    },
+    plugins:{legend:{display:false}}
+  }
+});
+
+function updateChart(){
+  chart.data.labels = priceHistory.map(p=>new Date(p.t));
+  chart.data.datasets[0].data = priceHistory.map(p=>p.price);
+  chart.update('none');
+}
+
+/* -----------------------
+   Indicators (SMA/EMA/RSI etc.)
+   ----------------------- */
+
+function sma(arr,n){
+  if(arr.length<n) return null;
+  const s = arr.slice(-n).reduce((a,b)=>a+b,0);
+  return s/n;
+}
+
+function ema(arr,n){
+  if(arr.length<n) return null;
+  // classic EMA seeded with SMA
+  let e = sma(arr.slice(0,n), n);
+  const k = 2/(n+1);
+  for(let i=n;i<arr.length;i++){
+    e = arr[i]*k + e*(1-k);
+  }
+  return e;
+}
+
+function rsi(arr,n=14){
+  if(arr.length < n+1) return 50;
+  let gain=0, loss=0;
+  for(let i=1;i<=n;i++){
+    const d = arr[i]-arr[i-1];
+    if(d>0) gain+=d; else loss-=d;
+  }
+  let avgG = gain/n, avgL = loss/n;
+  for(let i=n+1;i<arr.length;i++){
+    const d = arr[i]-arr[i-1];
+    const g = Math.max(d,0), l=Math.max(-d,0);
+    avgG = (avgG*(n-1)+g)/n;
+    avgL = (avgL*(n-1)+l)/n;
+  }
+  if(avgL===0) return 100;
+  const rs = avgG/avgL;
+  return 100 - (100/(1+rs));
+}
+
+function returns(arr){
+  const out=[];
+  for(let i=1;i<arr.length;i++) out.push(arr[i]-arr[i-1]);
+  return out;
+}
+
+function volatility(arr){
+  const r = returns(arr);
+  if(r.length<10) return 0;
+  const x = r.slice(-20);
+  const mean = x.reduce((a,b)=>a+b,0)/x.length;
+  const variance = x.reduce((a,b)=>a+Math.pow(b-mean,2),0)/x.length;
+  return Math.sqrt(variance);
+}
+
+function momentum(arr,n){
+  if(arr.length<n) return 0;
+  return arr[arr.length-1] - arr[arr.length-n];
+}
+
+/* Radar calculation (similar to original) */
+function calculateRadar(price){
+  const prices = priceHistory.map(x=>x.price);
+  if(prices.length < 30){
+    return {
+      score:50, rsi:50, ema20:null, ema50:null, ema200:null, volatility:0,
+      reasons:["Se colectează istoric XAUUSD...","Ţine pagina deschisă pentru construire indicatori."]
+    };
+  }
+
+  const ema20 = ema(prices,20), ema50 = ema(prices,50), ema200 = ema(prices,200);
+  const RSI = rsi(prices,14), vol = volatility(prices);
+  let score = 50, reasons=[];
+
+  if(ema20 && price>ema20){ score+=7; reasons.push("Preţ peste EMA20 → bullish"); } else if(ema20){ score-=7; reasons.push("Preţ sub EMA20 → bearish"); }
+  if(ema50 && ema20 && ema20>ema50){ score+=8; reasons.push("EMA20 > EMA50 → trend bullish"); } else if(ema50 && ema20){ score-=8; reasons.push("EMA20 < EMA50 → trend bearish"); }
+  if(ema200 && ema50 && ema50>ema200){ score+=8; reasons.push("EMA50 > EMA200 → structură bullish"); } else if(ema200 && ema50){ score-=8; reasons.push("EMA50 < EMA200 → structură bearish"); }
+  if(RSI>=55 && RSI<=70){ score+=8; reasons.push("RSI bullish"); } else if(RSI<45){ score-=8; reasons.push("RSI bearish"); } else if(RSI>70){ score-=4; reasons.push("RSI overbought → atenţie"); }
+  const m = momentum(prices, Math.min(20, prices.length));
+  if(m>0){ score+=7; reasons.push("Momentum pozitiv"); } else { score-=7; reasons.push("Momentum negativ"); }
+
+  score = Math.round(clamp(score,0,100));
+  return {score, rsi:RSI, ema20, ema50, ema200, volatility:vol, reasons};
+}
+
+/* Map score to label/class */
+function signalText(score){
+  if(score>=80) return "STRONG BUY";
+  if(score>=65) return "BUY";
+  if(score<=20) return "STRONG SELL";
+  if(score<=35) return "SELL";
+  return "WAIT";
+}
+function signalClass(text){
+  if(text.includes("BUY")) return "buy";
+  if(text.includes("SELL")) return "sell";
+  return "wait";
+}
+
+/* -----------------------
+   Fetch gold price (flexible parsing)
+   - Accepts URL with {apikey} placeholder OR appends ?apikey=... if key provided and no placeholder
+   - Optionally sends Authorization: Bearer header
+   - Tries to parse multiple common shapes
+   ----------------------- */
+
+async function fetchWithTimeout(url, opts = {}, timeoutMs = 8000){
+  const controller = new AbortController();
+  const id = setTimeout(()=>controller.abort(), timeoutMs);
+  opts.signal = controller.signal;
+  try{
+    const r = await fetch(url, opts);
+    const text = await r.text();
+    let parsed = null;
+    try{ parsed = text ? JSON.parse(text) : null; }catch(e){}
+    return {ok:r.ok,status:r.status,statusText:r.statusText, text, json:parsed};
+  }finally{ clearTimeout(id); }
+}
+
+function buildUrlAndOpts(){
+  let url = $('apiUrl').value.trim() || CONFIG.apiUrl;
+  const key = $('apiKey').value.trim() || CONFIG.apiKey;
+  const useHeader = $('useHeader').checked || CONFIG.useHeader;
+  const timeoutMs = Number($('timeout').value) || CONFIG.timeoutMs;
+
+  let opts = {cache:'no-store', headers:{ 'Accept':'application/json' }};
+
+  if(key){
+    if(url.includes('{apikey}')){
+      url = url.replace(/\{apikey\}/g, encodeURIComponent(key));
+    } else if(useHeader){
+      opts.headers['Authorization'] = 'Bearer ' + key;
+    } else {
+      // append query param
+      const sep = url.includes('?') ? '&' : '?';
+      url = url + sep + 'apikey=' + encodeURIComponent(key);
+    }
+  }
+
+  return {url, opts, timeoutMs};
+}
+
+function parsePriceFromResponse(resp){
+  // resp.json may be null; resp.text is string
+  const j = resp.json;
+  // common shapes:
+  // { price: 1950.12 }
+  // { rates: { USD: 1950.12 } }
+  // { data: { price: ... } }
+  // [ { symbol:'XAU', price: 1950 }, ... ]  (metals.live)
+  // direct number in text
+  if(typeof j === 'number') return j;
+  if(j && typeof j.price === 'number') return j.price;
+  if(j && typeof j.data === 'object' && typeof j.data.price === 'number') return j.data.price;
+  if(j && j.rates && (typeof j.rates.USD === 'number')) return j.rates.USD;
+  if(Array.isArray(j) && j.length && typeof j[0].price === 'number') return j[0].price;
+  // try some other known key names
+  if(j && typeof j.value === 'number') return j.value;
+  if(j && typeof j.rate === 'number') return j.rate;
+  // try to extract number from text
+  const m = resp.text && resp.text.match(/[-+]?\d*\.?\d+/);
+  if(m) return Number(m[0]);
+  // try deep scan for first number value in JSON
+  if(j && typeof j === 'object'){
+    try{
+      const s = JSON.stringify(j);
+      const mm = s.match(/[-+]?\d*\.?\d+/);
+      if(mm) return Number(mm[0]);
+    }catch(e){}
+  }
+  return null;
+}
+
+/* -----------------------
+   Update/render logic
+   ----------------------- */
+
+let running = true;
+let backoffAttempts = 0;
+
+async function performFetchPrice(){
+  const {url, opts, timeoutMs} = buildUrlAndOpts();
+  $('lastRaw').value = '';
+  try{
+    const resp = await fetchWithTimeout(url, opts, timeoutMs);
+    $('lastRaw').value = resp.text || ('status: ' + resp.status + ' ' + resp.statusText);
+    if(!resp.ok){
+      throw new Error('HTTP '+resp.status+' '+resp.statusText);
+    }
+    const price = parsePriceFromResponse(resp);
+    if(price === null || !Number.isFinite(price)) throw new Error('Could not parse price from API response');
+    return price;
+  }catch(e){
+    throw e;
+  }
+}
+
+function savePoint(price){
+  priceHistory.push({t: Date.now(), price: Number(price)});
+  const maxP = Number($('maxPoints').value) || CONFIG.maxPoints;
+  if(priceHistory.length > maxP) priceHistory = priceHistory.slice(-maxP);
+  saveHistory();
+  updateChart();
+}
+
+function renderAll(price, radar){
+  $('price').innerText = '$' + fmtPrice(price);
+  $('score').innerText = radar.score + '/100';
+  $('rsi').innerText = radar.rsi ? radar.rsi.toFixed(1) : '--';
+  $('vol').innerText = radar.volatility ? radar.volatility.toFixed(3) : '--';
+  $('dp').innerText = priceHistory.length;
+  $('last').innerText = nowISO();
+  const sigText = signalText(radar.score);
+  $('signal').innerText = sigText;
+  $('signal').className = 'sig ' + signalClass(sigText);
+  // reasons
+  $('reasons').innerHTML = radar.reasons.map(r=>`<div class="small">${r}</div>`).join('');
+  $('status').innerText = `● LIVE · ${nowISO()} · ${priceHistory.length} datapoints`;
+}
+
+/* Main loop: non-overlapping, with backoff */
+async function loopOnce(){
+  try{
+    const price = await performFetchPrice();
+    backoffAttempts = 0;
+    savePoint(price);
+    const radar = calculateRadar(price);
+    renderAll(price, radar);
+    CONFIG.apiUrl = $('apiUrl').value.trim();
+    CONFIG.apiKey = $('apiKey').value.trim();
+    CONFIG.useHeader = $('useHeader').checked;
+    saveConfig(CONFIG);
+  }catch(err){
+    console.error('fetch error', err);
+    backoffAttempts++;
+    if(priceHistory.length){
+      // degraded: use last known price for indicators
+      const lastPrice = priceHistory[priceHistory.length-1].price;
+      const radar = calculateRadar(lastPrice);
+      renderAll(lastPrice, radar);
+      $('status').innerText = `⚠️ Degraded · folosind ultimul preț · ${err.message}`;
+    } else {
+      $('status').innerText = '🔴 Feed error: ' + err.message;
+    }
+  }
+}
+
+/* Controlled loop with interval and exponential backoff when errors happen */
+let loopHandle = null;
+async function startLoop(){
+  if(loopHandle) return;
+  running = true;
+  $('toggleLive').innerText = 'Pause';
+  const baseInterval = Math.max(1000, (Number($('interval').value) || CONFIG.intervalSec) * 1000);
+  while(running){
+    const start = Date.now();
+    await loopOnce();
+    const elapsed = Date.now() - start;
+    let wait = Math.max(1000, baseInterval - elapsed);
+    // backoff if repeated failures
+    if(backoffAttempts > 0){
+      wait = Math.min(60000, wait * Math.pow(1.8, backoffAttempts));
+    }
+    await new Promi

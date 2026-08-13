@@ -2,281 +2,551 @@
 <html lang="ro">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>XAUUSD Supertrend Paper Radar</title>
+<meta name="viewport"
+      content="width=device-width,initial-scale=1,maximum-scale=1">
+
+<title>XAU/USD Supertrend Live Radar</title>
 
 <style>
-*{box-sizing:border-box}
+*{
+  box-sizing:border-box;
+}
 
 body{
- margin:0;
- background:#070b11;
- color:#edf2f7;
- font-family:Arial,sans-serif
+  margin:0;
+  background:#070b11;
+  color:#edf2f7;
+  font-family:Arial,sans-serif;
 }
 
 .wrap{
- max-width:1100px;
- margin:auto;
- padding:14px
+  max-width:1100px;
+  margin:auto;
+  padding:14px;
 }
 
 .panel{
- background:#0d141f;
- border:1px solid #223149;
- border-radius:15px;
- padding:15px;
- margin-bottom:12px
+  background:#0d141f;
+  border:1px solid #223149;
+  border-radius:15px;
+  padding:15px;
+  margin-bottom:12px;
 }
 
-h1{margin:0;font-size:23px}
+h1{
+  margin:0;
+  font-size:23px;
+}
+
+h3{
+  margin-top:0;
+}
 
 .sub{
- color:#8290a3;
- font-size:11px;
- margin-top:5px
+  color:#8290a3;
+  font-size:11px;
+  margin-top:5px;
 }
 
 .status{
- margin-top:10px;
- font-size:11px
+  margin-top:10px;
+  font-size:12px;
 }
 
 .grid{
- display:grid;
- grid-template-columns:repeat(4,1fr);
- gap:10px
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
 }
 
 .box{
- background:#101a28;
- border:1px solid #1f2d41;
- border-radius:10px;
- padding:12px
+  background:#101a28;
+  border:1px solid #1f2d41;
+  border-radius:10px;
+  padding:12px;
 }
 
 .label{
- color:#8190a3;
- font-size:10px;
- text-transform:uppercase
+  color:#8190a3;
+  font-size:10px;
+  text-transform:uppercase;
 }
 
 .value{
- font-size:22px;
- font-weight:900;
- margin-top:5px
+  font-size:22px;
+  font-weight:900;
+  margin-top:5px;
 }
 
-.buy{color:#42e39b}
-.sell{color:#ff6677}
-.wait{color:#ffd34d}
-.win{color:#43e39b}
-.loss{color:#ff6677}
+.buy{
+  color:#42e39b;
+}
+
+.sell{
+  color:#ff6677;
+}
+
+.wait{
+  color:#ffd34d;
+}
+
+.win{
+  color:#43e39b;
+}
+
+.loss{
+  color:#ff6677;
+}
 
 .trade{
- display:grid;
- grid-template-columns:repeat(6,1fr);
- gap:8px;
- margin-top:10px
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  gap:8px;
 }
 
 table{
- width:100%;
- border-collapse:collapse;
- font-size:12px
+  width:100%;
+  border-collapse:collapse;
+  font-size:12px;
 }
 
-th,td{
- padding:9px 6px;
- border-bottom:1px solid #1d293a;
- text-align:center
+th,
+td{
+  padding:9px 5px;
+  border-bottom:1px solid #1d293a;
+  text-align:center;
 }
 
 th{
- color:#8290a3;
- font-size:10px
+  color:#8290a3;
+  font-size:10px;
 }
 
 .notice{
- background:#111b29;
- border:1px solid #26364c;
- padding:10px;
- border-radius:9px;
- color:#aeb9c7;
- font-size:11px;
- margin-top:10px
+  margin-top:10px;
+  background:#111b29;
+  border:1px solid #26364c;
+  padding:10px;
+  border-radius:9px;
+  color:#aeb9c7;
+  font-size:11px;
+}
+
+.small{
+  font-size:10px;
+  color:#718096;
+  margin-top:8px;
 }
 
 @media(max-width:800px){
- .grid{grid-template-columns:1fr 1fr}
- .trade{grid-template-columns:1fr 1fr 1fr}
+
+  .grid{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .trade{
+    grid-template-columns:1fr 1fr 1fr;
+  }
 }
 
 @media(max-width:500px){
- .grid{grid-template-columns:1fr 1fr}
- .trade{grid-template-columns:1fr 1fr}
+
+  .wrap{
+    padding:9px;
+  }
+
+  h1{
+    font-size:21px;
+  }
+
+  .grid{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .trade{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .value{
+    font-size:20px;
+  }
+
+  table{
+    font-size:10px;
+  }
+
+  th,
+  td{
+    padding:7px 2px;
+  }
 }
 </style>
 </head>
+
 
 <body>
 
 <div class="wrap">
 
+
+<!-- =====================================================
+     HEADER
+====================================================== -->
+
 <div class="panel">
 
-<h1>⚡ XAU/USD SUPERTrend PAPER RADAR</h1>
+<h1>
+⚡ XAU/USD SUPERTrend PAPER RADAR
+</h1>
 
 <div class="sub">
-LIVE · 15M · SUPERTREND ONLY · PAPER TRADING · 5 SEC
+LIVE · 15M · SUPERTREND ONLY · WEBSOCKET · PAPER TRADING
 </div>
 
-<div id="status" class="status">
-Se pornește...
+<div id="status"
+     class="status wait">
+🟡 Se pornește...
+</div>
+
+<div id="lastUpdate"
+     class="small">
+Ultimul update: —
 </div>
 
 </div>
 
+
+<!-- =====================================================
+     MARKET
+====================================================== -->
 
 <div class="panel">
 
 <div class="grid">
 
 <div class="box">
-<div class="label">XAU/USD</div>
-<div id="price" class="value">—</div>
+
+<div class="label">
+XAU/USD
 </div>
+
+<div id="price"
+     class="value">
+—
+</div>
+
+</div>
+
 
 <div class="box">
-<div class="label">SIGNAL</div>
-<div id="signal" class="value wait">WAIT</div>
+
+<div class="label">
+SIGNAL
 </div>
+
+<div id="signal"
+     class="value wait">
+WAIT
+</div>
+
+</div>
+
 
 <div class="box">
-<div class="label">SUPERTREND</div>
-<div id="st" class="value">—</div>
+
+<div class="label">
+SUPERTREND
 </div>
+
+<div id="st"
+     class="value">
+—
+</div>
+
+</div>
+
 
 <div class="box">
-<div class="label">LOT CURENT</div>
-<div id="lot" class="value">0.01</div>
+
+<div class="label">
+LOT CURENT
+</div>
+
+<div id="lot"
+     class="value">
+0.01
 </div>
 
 </div>
 
 </div>
 
+</div>
+
+
+<!-- =====================================================
+     TRADE
+====================================================== -->
 
 <div class="panel">
 
-<h3>📌 Tranzacție simulată</h3>
+<h3>
+📌 Tranzacție simulată
+</h3>
 
 <div class="trade">
 
-<div class="box">
-<div class="label">ENTRY</div>
-<div id="entry" class="value">—</div>
-</div>
 
 <div class="box">
-<div class="label">SL</div>
-<div id="sl" class="value">—</div>
+
+<div class="label">
+ENTRY
 </div>
 
-<div class="box">
-<div class="label">TP</div>
-<div id="tp" class="value">—</div>
-</div>
-
-<div class="box">
-<div class="label">ATR</div>
-<div id="atr" class="value">—</div>
-</div>
-
-<div class="box">
-<div class="label">DIRECȚIE</div>
-<div id="direction" class="value wait">—</div>
-</div>
-
-<div class="box">
-<div class="label">STATUS</div>
-<div id="tradeStatus" class="value wait">WAIT</div>
+<div id="entry"
+     class="value">
+—
 </div>
 
 </div>
+
+
+<div class="box">
+
+<div class="label">
+STOP LOSS
+</div>
+
+<div id="sl"
+     class="value">
+—
+</div>
+
+</div>
+
+
+<div class="box">
+
+<div class="label">
+TAKE PROFIT
+</div>
+
+<div id="tp"
+     class="value">
+—
+</div>
+
+</div>
+
+
+<div class="box">
+
+<div class="label">
+ATR
+</div>
+
+<div id="atr"
+     class="value">
+—
+</div>
+
+</div>
+
+
+<div class="box">
+
+<div class="label">
+DIRECȚIE
+</div>
+
+<div id="direction"
+     class="value wait">
+—
+</div>
+
+</div>
+
+
+<div class="box">
+
+<div class="label">
+STATUS
+</div>
+
+<div id="tradeStatus"
+     class="value wait">
+WAIT
+</div>
+
+</div>
+
+
+</div>
+
 
 <div class="notice">
-⚠️ PAPER TRADING ONLY — nu se trimit ordine reale.
+⚠️ PAPER TRADING ONLY — nu se trimite niciun ordin real.
 </div>
 
 </div>
 
+
+<!-- =====================================================
+     STATISTICS
+====================================================== -->
 
 <div class="panel">
 
-<h3>📊 Statistici</h3>
+<h3>
+📊 Statistici
+</h3>
+
 
 <div class="grid">
 
-<div class="box">
-<div class="label">TOTAL</div>
-<div id="total" class="value">0</div>
-</div>
 
 <div class="box">
-<div class="label">WIN</div>
-<div id="wins" class="value win">0</div>
+
+<div class="label">
+TOTAL
 </div>
 
-<div class="box">
-<div class="label">LOSS</div>
-<div id="losses" class="value loss">0</div>
-</div>
-
-<div class="box">
-<div class="label">WIN RATE</div>
-<div id="winrate" class="value">0%</div>
+<div id="total"
+     class="value">
+0
 </div>
 
 </div>
+
+
+<div class="box">
+
+<div class="label">
+WIN
+</div>
+
+<div id="wins"
+     class="value win">
+0
+</div>
+
+</div>
+
+
+<div class="box">
+
+<div class="label">
+LOSS
+</div>
+
+<div id="losses"
+     class="value loss">
+0
+</div>
+
+</div>
+
+
+<div class="box">
+
+<div class="label">
+WIN RATE
+</div>
+
+<div id="winrate"
+     class="value">
+0%
+</div>
+
+</div>
+
+
+</div>
+
 
 <br>
 
+
 <div class="grid">
 
-<div class="box">
-<div class="label">LOSS CONSECUTIVE</div>
-<div id="consecutive" class="value">0</div>
-</div>
 
 <div class="box">
-<div class="label">LOT URMĂTOR</div>
-<div id="nextLot" class="value">0.01</div>
+
+<div class="label">
+LOSS CONSECUTIVE
 </div>
+
+<div id="consecutive"
+     class="value">
+0
+</div>
+
+</div>
+
 
 <div class="box">
-<div class="label">P/L SIMULAT</div>
-<div id="pnl" class="value">0</div>
+
+<div class="label">
+LOT URMĂTOR
 </div>
+
+<div id="nextLot"
+     class="value">
+0.01
+</div>
+
+</div>
+
 
 <div class="box">
-<div class="label">TRADE ACTIV</div>
-<div id="active" class="value">0</div>
+
+<div class="label">
+P/L SIMULAT
 </div>
+
+<div id="pnl"
+     class="value">
+0
+</div>
+
+</div>
+
+
+<div class="box">
+
+<div class="label">
+TRADE ACTIV
+</div>
+
+<div id="active"
+     class="value">
+0
+</div>
+
+</div>
+
 
 </div>
 
 </div>
 
+
+<!-- =====================================================
+     HISTORY
+====================================================== -->
 
 <div class="panel">
 
-<h3>📋 Istoric</h3>
+<h3>
+📋 Istoric WIN / LOSS
+</h3>
 
 <table>
 
 <thead>
+
 <tr>
+
 <th>#</th>
 <th>TIME</th>
 <th>SIDE</th>
@@ -285,1077 +555,1277 @@ Se pornește...
 <th>EXIT</th>
 <th>RESULT</th>
 <th>P/L</th>
+
 </tr>
+
 </thead>
 
-<tbody id="history"></tbody>
+
+<tbody id="history">
+</tbody>
 
 </table>
 
 </div>
+
 
 </div>
 
 
 <script>
 
-/*
-==========================================================
- CONFIGURAȚIE
-==========================================================
+/* =========================================================
+   CONFIG
+=========================================================
 
- IMPORTANT:
- Nu pune aici cheia pe care ai postat-o în chat.
- Revoc-o/generează una nouă și pune cheia nouă între ghilimele.
+   IMPORTANT:
+   Pune aici cheia ta NOUĂ.
 
-*/
+   Nu folosi cheia pe care ai postat-o anterior.
+========================================================= */
 
 const API_KEY =
   "75d889c636f34dd68ac0719ea070cf3b";
 
-const API =
+
+const REST_API =
   "https://api.twelvedata.com";
+
+
+const WS_URL =
+  "wss://ws.twelvedata.com/v1/quotes/price?apikey=" +
+  encodeURIComponent(API_KEY);
+
 
 const SYMBOL =
   "XAU/USD";
 
+
 const INTERVAL =
   "15min";
 
-const UPDATE_MS =
+
+/*
+   Ecranul se reîmprospătează la 5 secunde.
+   PREȚUL nu este cerut REST la fiecare 5 secunde.
+   Prețul vine prin WebSocket.
+*/
+
+const UI_UPDATE_MS =
   5000;
 
 
 /*
- Supertrend:
- ATR period = 10
- multiplier = 3
+   Supertrend
 */
 
-const ST_PERIOD = 10;
-const ST_MULTIPLIER = 3;
+const ST_PERIOD =
+  10;
+
+const ST_MULTIPLIER =
+  3;
 
 
 /*
- Trade simulator:
- baza = 0.01
- după LOSS +0.01
- după WIN revine la 0.01
- maximum = 0.10
+   Money management simulator
 */
 
-const BASE_LOT = 0.01;
-const LOT_STEP = 0.01;
-const MAX_LOT = 0.10;
+const BASE_LOT =
+  0.01;
+
+const LOT_STEP =
+  0.01;
+
+const MAX_LOT =
+  0.10;
 
 
 /*
- SL = ATR * 2
- TP = 1.5R
+   SL / TP
+
+   SL = ATR x 2
+   TP = 1.5R
 */
 
-const SL_ATR_MULT = 2;
-const TP_R_MULT = 1.5;
+const SL_ATR =
+  2;
+
+const TP_R =
+  1.5;
 
 
-/* ===================================================== */
+/* =========================================================
+   STATE
+========================================================= */
 
-let candles=[];
-let livePrice=null;
+let candles = [];
 
-let activeTrade=null;
+let livePrice = null;
 
-let tradeNumber=0;
+let socket = null;
 
-let wins=0;
-let losses=0;
+let reconnectTimer = null;
 
-let consecutiveLosses=0;
+let connected = false;
 
-let totalPnL=0;
+let activeTrade = null;
 
-let history=[];
+let lastSignal = null;
 
-let lastSignal=null;
+let tradeNumber = 0;
 
-let timer=null;
+let wins = 0;
+
+let losses = 0;
+
+let consecutiveLosses = 0;
+
+let totalPnL = 0;
+
+let history = [];
 
 
-/* ==========================================================
- HELPERS
-========================================================== */
+/* =========================================================
+   DOM
+========================================================= */
 
 function $(id){
- return document.getElementById(id);
-}
 
-function fmt(x,n=2){
-
- if(
-   x===null ||
-   x===undefined ||
-   !Number.isFinite(x)
- ) return "—";
-
- return Number(x).toFixed(n);
-}
-
-function status(text,color="#ffd34d"){
-
- $("status").textContent=text;
- $("status").style.color=color;
+  return document.getElementById(id);
 
 }
 
 
-/* ==========================================================
- ATR
-========================================================== */
+/* =========================================================
+   FORMAT
+========================================================= */
 
-function ATR(data,period=14){
+function fmt(value, digits=2){
 
- if(data.length<period+1)
-   return null;
+  if(
+    value === null ||
+    value === undefined ||
+    !Number.isFinite(value)
+  ){
 
- let tr=[];
+    return "—";
 
- for(let i=1;i<data.length;i++){
+  }
 
-   const c=data[i];
-   const p=data[i-1];
-
-   tr.push(
-     Math.max(
-       c.high-c.low,
-       Math.abs(c.high-p.close),
-       Math.abs(c.low-p.close)
-     )
-   );
-
- }
-
- let a=tr.slice(-period);
-
- return a.reduce(
-   (sum,x)=>sum+x,
-   0
- )/a.length;
+  return Number(value).toFixed(digits);
 
 }
 
 
-/* ==========================================================
- SUPERTREND
-========================================================== */
+/* =========================================================
+   STATUS
+========================================================= */
+
+function setStatus(text, color){
+
+  $("status").textContent =
+    text;
+
+  $("status").style.color =
+    color;
+
+}
+
+
+/* =========================================================
+   ATR
+========================================================= */
+
+function calculateATR(data, period=14){
+
+  if(
+    data.length <
+    period + 1
+  ){
+
+    return null;
+
+  }
+
+
+  const tr = [];
+
+
+  for(
+    let i=1;
+    i<data.length;
+    i++
+  ){
+
+    const current =
+      data[i];
+
+    const previous =
+      data[i-1];
+
+
+    const range =
+      Math.max(
+
+        current.high -
+        current.low,
+
+        Math.abs(
+          current.high -
+          previous.close
+        ),
+
+        Math.abs(
+          current.low -
+          previous.close
+        )
+
+      );
+
+
+    tr.push(range);
+
+  }
+
+
+  const values =
+    tr.slice(-period);
+
+
+  if(!values.length)
+    return null;
+
+
+  return values.reduce(
+    (sum,value) =>
+      sum + value,
+    0
+  ) / values.length;
+
+}
+
+
+/* =========================================================
+   SUPERTREND
+========================================================= */
 
 function calculateSupertrend(
- data,
- period=ST_PERIOD,
- multiplier=ST_MULTIPLIER
+  data,
+  period=ST_PERIOD,
+  multiplier=ST_MULTIPLIER
 ){
 
- if(data.length<period+10)
-   return null;
+  if(
+    data.length <
+    period + 10
+  ){
+
+    return null;
+
+  }
 
 
- let atrs=[];
- let upper=[];
- let lower=[];
- let trends=[];
+  const atrs = [];
+
+  const upper = [];
+
+  const lower = [];
+
+  const trend = [];
 
 
- for(let i=0;i<data.length;i++){
+  for(
+    let i=0;
+    i<data.length;
+    i++
+  ){
 
-   if(i<period){
+    if(i < period){
 
-     atrs.push(null);
-     upper.push(null);
-     lower.push(null);
-     trends.push(1);
+      atrs.push(null);
 
-     continue;
+      upper.push(null);
 
-   }
+      lower.push(null);
 
+      trend.push(1);
 
-   let a=
-     ATR(
-       data.slice(0,i+1),
-       period
-     );
+      continue;
 
-   atrs.push(a);
+    }
 
 
-   let c=data[i];
-
-   let hl2=
-     (c.high+c.low)/2;
-
-   let basicUpper=
-     hl2+
-     multiplier*a;
-
-   let basicLower=
-     hl2-
-     multiplier*a;
+    const atr =
+      calculateATR(
+        data.slice(
+          0,
+          i + 1
+        ),
+        period
+      );
 
 
-   let prevUpper=
-     upper[i-1];
-
-   let prevLower=
-     lower[i-1];
-
-   let prevClose=
-     data[i-1].close;
+    atrs.push(atr);
 
 
-   let finalUpper=
-     prevUpper===null ||
-     basicUpper<prevUpper ||
-     prevClose>prevUpper
-       ?basicUpper
-       :prevUpper;
+    const candle =
+      data[i];
 
 
-   let finalLower=
-     prevLower===null ||
-     basicLower>prevLower ||
-     prevClose<prevLower
-       ?basicLower
-       :prevLower;
+    const hl2 =
+      (
+        candle.high +
+        candle.low
+      ) / 2;
 
 
-   upper.push(finalUpper);
-   lower.push(finalLower);
+    const basicUpper =
+      hl2 +
+      multiplier * atr;
 
 
-   let previousTrend=
-     trends[i-1];
-
-   let trend=
-     previousTrend;
+    const basicLower =
+      hl2 -
+      multiplier * atr;
 
 
-   if(
-     previousTrend===-1 &&
-     c.close>finalUpper
-   ){
+    const previousUpper =
+      upper[i-1];
 
-     trend=1;
+    const previousLower =
+      lower[i-1];
 
-   }
-
-   else if(
-     previousTrend===1 &&
-     c.close<finalLower
-   ){
-
-     trend=-1;
-
-   }
+    const previousClose =
+      data[i-1].close;
 
 
-   trends.push(trend);
-
- }
+    let finalUpper;
 
 
- let i=data.length-1;
+    let finalLower;
 
- return {
 
-   direction:
-     trends[i]===1
-       ?"BUY"
-       :"SELL",
+    if(
+      previousUpper === null ||
+      basicUpper < previousUpper ||
+      previousClose > previousUpper
+    ){
 
-   line:
-     trends[i]===1
-       ?lower[i]
-       :upper[i],
+      finalUpper =
+        basicUpper;
 
-   atr:
-     atrs[i],
+    }else{
 
-   changed:
-     trends[i]!==trends[i-1]
+      finalUpper =
+        previousUpper;
 
- };
+    }
+
+
+    if(
+      previousLower === null ||
+      basicLower > previousLower ||
+      previousClose < previousLower
+    ){
+
+      finalLower =
+        basicLower;
+
+    }else{
+
+      finalLower =
+        previousLower;
+
+    }
+
+
+    upper.push(
+      finalUpper
+    );
+
+    lower.push(
+      finalLower
+    );
+
+
+    const previousTrend =
+      trend[i-1];
+
+
+    let currentTrend =
+      previousTrend;
+
+
+    if(
+      previousTrend === -1 &&
+      candle.close > finalUpper
+    ){
+
+      currentTrend = 1;
+
+    }
+
+
+    if(
+      previousTrend === 1 &&
+      candle.close < finalLower
+    ){
+
+      currentTrend = -1;
+
+    }
+
+
+    trend.push(
+      currentTrend
+    );
+
+  }
+
+
+  const i =
+    data.length - 1;
+
+
+  return {
+
+    direction:
+      trend[i] === 1
+        ? "BUY"
+        : "SELL",
+
+
+    line:
+      trend[i] === 1
+        ? lower[i]
+        : upper[i],
+
+
+    atr:
+      atrs[i],
+
+
+    changed:
+      trend[i] !==
+      trend[i-1]
+
+  };
 
 }
 
 
-/* ==========================================================
- HISTORY
-========================================================== */
+/* =========================================================
+   LOAD 15M HISTORY
+=========================================================
+
+   IMPORTANT:
+   This is called ONCE when the page starts.
+
+   It is not called every 5 seconds.
+========================================================= */
 
 async function loadHistory(){
 
- const url=
-   API+
-   "/time_series?"+
-   "symbol="+
-   encodeURIComponent(SYMBOL)+
-   "&interval="+
-   INTERVAL+
-   "&outputsize=200"+
-   "&apikey="+
-   encodeURIComponent(API_KEY);
+  const url =
+    REST_API +
+    "/time_series?" +
+    "symbol=" +
+    encodeURIComponent(SYMBOL) +
+    "&interval=" +
+    INTERVAL +
+    "&outputsize=200" +
+    "&apikey=" +
+    encodeURIComponent(API_KEY);
 
 
- const response=
-   await fetch(url);
+  const response =
+    await fetch(url);
 
 
- const json=
-   await response.json();
+  const json =
+    await response.json();
 
 
- if(json.status==="error"){
+  if(
+    json.status ===
+    "error"
+  ){
 
-   throw new Error(
-     json.message ||
-     "Twelve Data API error"
-   );
+    throw new Error(
+      json.message ||
+      "Twelve Data API error"
+    );
 
- }
-
-
- if(!json.values){
-
-   throw new Error(
-     "Nu au fost returnate date."
-   );
-
- }
+  }
 
 
- candles=
-   json.values
-   .reverse()
-   .map(x=>({
+  if(
+    !json.values ||
+    !json.values.length
+  ){
 
-     time:
-       new Date(
-         x.datetime
-       ).getTime(),
+    throw new Error(
+      "Nu au venit lumânările 15M."
+    );
 
-     open:
-       Number(x.open),
-
-     high:
-       Number(x.high),
-
-     low:
-       Number(x.low),
-
-     close:
-       Number(x.close),
-
-     volume:
-       Number(x.volume)||1
-
-   }));
+  }
 
 
- livePrice=
-   candles.at(-1).close;
+  candles =
+    json.values
+      .reverse()
+      .map(c => ({
 
-}
+        time:
+          new Date(
+            c.datetime
+          ).getTime(),
 
+        open:
+          Number(c.open),
 
-/* ==========================================================
- LIVE PRICE
-========================================================== */
+        high:
+          Number(c.high),
 
-async function getPrice(){
+        low:
+          Number(c.low),
 
- const url=
-   API+
-   "/price?"+
-   "symbol="+
-   encodeURIComponent(SYMBOL)+
-   "&apikey="+
-   encodeURIComponent(API_KEY);
+        close:
+          Number(c.close),
 
+        volume:
+          Number(c.volume) || 0
 
- const response=
-   await fetch(url);
-
-
- const json=
-   await response.json();
-
-
- if(json.status==="error"){
-
-   throw new Error(
-     json.message ||
-     "Price error"
-   );
-
- }
+      }));
 
 
- const p=
-   Number(json.price);
+  /*
+     Preț inițial.
+     După aceea WebSocket-ul preia controlul.
+  */
 
-
- if(Number.isFinite(p))
-   livePrice=p;
+  livePrice =
+    candles.at(-1).close;
 
 }
 
 
-/* ==========================================================
- UPDATE CANDLE
-========================================================== */
+/* =========================================================
+   CURRENT 15M CANDLE
+========================================================= */
 
-function updateCandle(){
+function updateCurrentCandle(){
 
- if(!livePrice)
-   return;
+  if(
+    livePrice === null
+  ){
 
+    return;
 
- const now=Date.now();
-
- const bucket=
-   Math.floor(
-     now/900000
-   )*900000;
+  }
 
 
- let c=candles.at(-1);
+  /*
+     15 minute = 900000 ms
+  */
+
+  const bucket =
+    Math.floor(
+      Date.now() / 900000
+    ) * 900000;
 
 
- if(!c || c.time!==bucket){
+  let candle =
+    candles.at(-1);
 
-   candles.push({
 
-     time:bucket,
+  /*
+     Dacă a început o nouă lumânare
+     15M, creăm una nouă.
+  */
 
-     open:livePrice,
+  if(
+    !candle ||
+    candle.time !== bucket
+  ){
 
-     high:livePrice,
+    candles.push({
 
-     low:livePrice,
+      time:
+        bucket,
 
-     close:livePrice,
+      open:
+        livePrice,
 
-     volume:1
+      high:
+        livePrice,
 
-   });
+      low:
+        livePrice,
 
-   if(candles.length>250)
-     candles.shift();
+      close:
+        livePrice,
 
- }
+      volume:
+        0
 
- else{
+    });
 
-   c.high=
-     Math.max(
-       c.high,
-       livePrice
-     );
 
-   c.low=
-     Math.min(
-       c.low,
-       livePrice
-     );
+    if(
+      candles.length > 250
+    ){
 
-   c.close=
-     livePrice;
+      candles.shift();
 
- }
+    }
+
+    return;
+
+  }
+
+
+  /*
+     Actualizăm lumânarea
+     15M curentă.
+  */
+
+  candle.high =
+    Math.max(
+      candle.high,
+      livePrice
+    );
+
+
+  candle.low =
+    Math.min(
+      candle.low,
+      livePrice
+    );
+
+
+  candle.close =
+    livePrice;
 
 }
 
 
-/* ==========================================================
- LOT
-========================================================== */
+/* =========================================================
+   WEBSOCKET
+========================================================= */
 
-function currentLot(){
+function connectWebSocket(){
 
- let lot=
-   BASE_LOT+
-   consecutiveLosses*LOT_STEP;
+  if(
+    !API_KEY ||
+    API_KEY ===
+    "PUNE_AICI_CHEIA_NOUA"
+  ){
 
- return Math.min(
-   lot,
-   MAX_LOT
- );
+    setStatus(
+      "🔴 Pune cheia în API_KEY.",
+      "#ff6677"
+    );
+
+    return;
+
+  }
+
+
+  try{
+
+    socket =
+      new WebSocket(
+        WS_URL
+      );
+
+  }catch(error){
+
+    scheduleReconnect();
+
+    return;
+
+  }
+
+
+  socket.onopen =
+    function(){
+
+      connected = true;
+
+
+      setStatus(
+        "🟢 LIVE · WebSocket conectat · XAU/USD",
+        "#43e39b"
+      );
+
+
+      /*
+         Abonare XAU/USD
+      */
+
+      socket.send(
+        JSON.stringify({
+
+          action:
+            "subscribe",
+
+          params:{
+
+            symbols:
+              SYMBOL
+
+          }
+
+        })
+      );
+
+    };
+
+
+  socket.onmessage =
+    function(event){
+
+      try{
+
+        const data =
+          JSON.parse(
+            event.data
+          );
+
+
+        /*
+           Unele mesaje sunt status/info.
+        */
+
+        if(
+          data.event &&
+          data.event !==
+          "price"
+        ){
+
+          return;
+
+        }
+
+
+        /*
+           Twelve Data poate returna
+           price ca string.
+        */
+
+        const p =
+          Number(
+            data.price
+          );
+
+
+        if(
+          Number.isFinite(p)
+        ){
+
+          livePrice = p;
+
+        }
+
+      }catch(error){
+
+        console.error(
+          "WS parse:",
+          error
+        );
+
+      }
+
+    };
+
+
+  socket.onerror =
+    function(){
+
+      setStatus(
+        "🟠 WebSocket error — reconectare...",
+        "#ffd34d"
+      );
+
+    };
+
+
+  socket.onclose =
+    function(){
+
+      connected = false;
+
+
+      setStatus(
+        "🟠 WebSocket închis — reconectare...",
+        "#ffd34d"
+      );
+
+
+      scheduleReconnect();
+
+    };
 
 }
 
 
-/* ==========================================================
- OPEN PAPER TRADE
-========================================================== */
+/* =========================================================
+   RECONNECT
+========================================================= */
 
-function openTrade(direction,st){
+function scheduleReconnect(){
 
- if(activeTrade)
-   return;
+  if(
+    reconnectTimer
+  ){
 
+    return;
 
- if(!st || !st.changed)
-   return;
-
-
- if(!livePrice || !st.atr)
-   return;
+  }
 
 
- const lot=
-   currentLot();
+  reconnectTimer =
+    setTimeout(
+      function(){
 
+        reconnectTimer =
+          null;
 
- const entry=
-   livePrice;
+        connectWebSocket();
 
-
- const risk=
-   st.atr*
-   SL_ATR_MULT;
-
-
- let sl;
- let tp;
-
-
- if(direction==="BUY"){
-
-   sl=
-     entry-risk;
-
-   tp=
-     entry+
-     risk*TP_R_MULT;
-
- }
-
- else{
-
-   sl=
-     entry+risk;
-
-   tp=
-     entry-
-     risk*TP_R_MULT;
-
- }
-
-
- activeTrade={
-
-   number:
-     ++tradeNumber,
-
-   time:
-     new Date(),
-
-   side:
-     direction,
-
-   lot,
-
-   entry,
-
-   sl,
-
-   tp,
-
-   atr:
-     st.atr
-
- };
-
-
- renderTrade();
+      },
+      5000
+    );
 
 }
 
 
-/* ==========================================================
- CHECK TP / SL
-========================================================== */
+/* =========================================================
+   LOT
+========================================================= */
+
+function getCurrentLot(){
+
+  const lot =
+    BASE_LOT +
+    (
+      consecutiveLosses *
+      LOT_STEP
+    );
+
+
+  return Math.min(
+    lot,
+    MAX_LOT
+  );
+
+}
+
+
+/* =========================================================
+   OPEN PAPER TRADE
+========================================================= */
+
+function openPaperTrade(
+  direction,
+  st
+){
+
+  if(
+    activeTrade
+  ){
+
+    return;
+
+  }
+
+
+  if(
+    !livePrice ||
+    !st ||
+    !st.atr
+  ){
+
+    return;
+
+  }
+
+
+  const lot =
+    getCurrentLot();
+
+
+  const entry =
+    livePrice;
+
+
+  const risk =
+    st.atr *
+    SL_ATR;
+
+
+  let sl;
+
+  let tp;
+
+
+  if(
+    direction ===
+    "BUY"
+  ){
+
+    sl =
+      entry -
+      risk;
+
+
+    tp =
+      entry +
+      risk * TP_R;
+
+  }else{
+
+    sl =
+      entry +
+      risk;
+
+
+    tp =
+      entry -
+      risk * TP_R;
+
+  }
+
+
+  activeTrade = {
+
+    number:
+      ++tradeNumber,
+
+    time:
+      new Date(),
+
+    side:
+      direction,
+
+    lot:
+      lot,
+
+    entry:
+      entry,
+
+    sl:
+      sl,
+
+    tp:
+      tp,
+
+    atr:
+      st.atr
+
+  };
+
+
+  renderTrade();
+
+}
+
+
+/* =========================================================
+   CHECK TP / SL
+========================================================= */
 
 function checkTrade(){
 
- if(!activeTrade)
-   return;
+  if(
+    !activeTrade ||
+    !livePrice
+  ){
+
+    return;
+
+  }
 
 
- let t=
-   activeTrade;
-
- let result=null;
+  const t =
+    activeTrade;
 
 
- if(t.side==="BUY"){
-
-   if(livePrice<=t.sl)
-     result="LOSS";
-
-   else if(livePrice>=t.tp)
-     result="WIN";
-
- }
-
- else{
-
-   if(livePrice>=t.sl)
-     result="LOSS";
-
-   else if(livePrice<=t.tp)
-     result="WIN";
-
- }
+  let result =
+    null;
 
 
- if(!result)
-   return;
+  /*
+     BUY
+  */
+
+  if(
+    t.side ===
+    "BUY"
+  ){
+
+    /*
+       Dacă într-un update
+       prețul a atins SL,
+       considerăm LOSS.
+
+       SL are prioritate în cazul
+       în care un tick sare peste
+       ambele nivele.
+    */
+
+    if(
+      livePrice <=
+      t.sl
+    ){
+
+      result =
+        "LOSS";
+
+    }else if(
+      livePrice >=
+      t.tp
+    ){
+
+      result =
+        "WIN";
+
+    }
+
+  }
 
 
- let priceMove=
-   Math.abs(
-     livePrice-t.entry
-   );
+  /*
+     SELL
+  */
+
+  else{
+
+    if(
+      livePrice >=
+      t.sl
+    ){
+
+      result =
+        "LOSS";
+
+    }else if(
+      livePrice <=
+      t.tp
+    ){
+
+      result =
+        "WIN";
+
+    }
+
+  }
 
 
- let pnl=
-   (
-     result==="WIN"
-       ?priceMove
-       :-priceMove
-   )*t.lot;
+  if(!result)
+    return;
 
 
- if(result==="WIN"){
+  /*
+     P/L SIMULAT.
 
-   wins++;
+     Nu este USD broker.
+     Este price-distance × lot.
+  */
 
-   consecutiveLosses=0;
-
- }
- else{
-
-   losses++;
-
-   consecutiveLosses++;
-
- }
+  let movement =
+    Math.abs(
+      livePrice -
+      t.entry
+    );
 
 
- totalPnL+=pnl;
+  let pnl =
+    (
+      result ===
+      "WIN"
+        ? movement
+        : -movement
+    ) * t.lot;
 
 
- history.unshift({
+  if(
+    result ===
+    "WIN"
+  ){
 
-   number:t.number,
+    wins++;
 
-   time:t.time,
+    consecutiveLosses = 0;
 
-   side:t.side,
+  }else{
 
-   lot:t.lot,
+    losses++;
 
-   entry:t.entry,
+    consecutiveLosses++;
 
-   exit:livePrice,
-
-   result,
-
-   pnl
-
- });
+  }
 
 
- if(history.length>100)
-   history.pop();
+  totalPnL += pnl;
 
 
- activeTrade=null;
+  history.unshift({
+
+    number:
+      t.number,
+
+    time:
+      t.time,
+
+    side:
+      t.side,
+
+    lot:
+      t.lot,
+
+    entry:
+      t.entry,
+
+    exit:
+      livePrice,
+
+    result:
+      result,
+
+    pnl:
+      pnl
+
+  });
 
 
- renderHistory();
- renderStats();
- renderTrade();
+  if(
+    history.length >
+    100
+  ){
+
+    history.pop();
+
+  }
+
+
+  activeTrade =
+    null;
+
+
+  renderHistory();
+
+  renderStats();
+
+  renderTrade();
 
 }
 
 
-/* ==========================================================
- RENDER TRADE
-========================================================== */
+/* =========================================================
+   RENDER MARKET
+========================================================= */
+
+function renderMarket(st){
+
+  if(
+    livePrice !== null
+  ){
+
+    $("price").textContent =
+      fmt(
+        livePrice,
+        2
+      );
+
+  }
+
+
+  if(!st)
+    return;
+
+
+  $("signal").textContent =
+    st.direction;
+
+
+  $("signal").className =
+    "value " +
+    (
+      st.direction ===
+      "BUY"
+        ? "buy"
+        : "sell"
+    );
+
+
+  $("st").textContent =
+    st.direction +
+    " · " +
+    fmt(
+      st.line,
+      2
+    );
+
+}
+
+
+/* =========================================================
+   RENDER TRADE
+========================================================= */
 
 function renderTrade(){
 
- $("lot").textContent=
-   fmt(
-     currentLot(),
-     2
-   );
+  $("lot").textContent =
+    fmt(
+      getCurrentLot(),
+      2
+    );
 
 
- if(!activeTrade){
+  if(
+    !activeTrade
+  ){
 
-   $("entry").textContent="—";
-   $("sl").textContent="—";
-   $("tp").textContent="—";
-   $("atr").textContent="—";
-   $("direction").textContent="—";
+    $("entry").textContent =
+      "—";
 
-   $("tradeStatus").textContent=
-     "WAIT";
+    $("sl").textContent =
+      "—";
 
-   $("tradeStatus").className=
-     "value wait";
+    $("tp").textContent =
+      "—";
 
-   return;
+    $("atr").textContent =
+      "—";
 
- }
+    $("direction").textContent =
+      "—";
 
+    $("direction").className =
+      "value wait";
 
- let t=activeTrade;
+    $("tradeStatus").textContent =
+      "WAIT";
 
+    $("tradeStatus").className =
+      "value wait";
 
- $("entry").textContent=
-   fmt(t.entry);
+    return;
 
- $("sl").textContent=
-   fmt(t.sl);
+  }
 
- $("tp").textContent=
-   fmt(t.tp);
 
- $("atr").textContent=
-   fmt(t.atr);
+  const t =
+    activeTrade;
 
- $("direction").textContent=
-   t.side;
 
- $("direction").className=
-   "value "+
-   (
-     t.side==="BUY"
-       ?"buy"
-       :"sell"
-   );
+  $("entry").textContent =
+    fmt(
+      t.entry,
+      2
+    );
 
- $("tradeStatus").textContent=
-   "OPEN";
 
- $("tradeStatus").className=
-   "value "+
-   (
-     t.side==="BUY"
-       ?"buy"
-       :"sell"
-   );
-
-}
-
-
-/* ==========================================================
- STATS
-========================================================== */
-
-function renderStats(){
-
- let total=
-   wins+losses;
-
-
- $("total").textContent=
-   total;
-
- $("wins").textContent=
-   wins;
-
- $("losses").textContent=
-   losses;
-
- $("winrate").textContent=
-   total
-     ?(
-       wins/total*100
-      ).toFixed(1)+"%"
-     :"0%";
-
- $("consecutive").textContent=
-   consecutiveLosses;
-
- $("nextLot").textContent=
-   fmt(
-     currentLot(),
-     2
-   );
-
- $("pnl").textContent=
-   totalPnL.toFixed(4);
-
- $("active").textContent=
-   activeTrade
-     ?1
-     :0;
-
-}
-
-
-/* ==========================================================
- HISTORY TABLE
-========================================================== */
-
-function renderHistory(){
-
- let tbody=
-   $("history");
-
- tbody.innerHTML="";
-
-
- for(let t of history){
-
-   let tr=
-     document.createElement("tr");
-
-
-   tr.innerHTML=`
-
-     <td>${t.number}</td>
-
-     <td>
-       ${t.time.toLocaleTimeString()}
-     </td>
-
-     <td class="${
-       t.side==="BUY"
-         ?"buy"
-         :"sell"
-     }">
-       ${t.side}
-     </td>
-
-     <td>
-       ${fmt(t.lot,2)}
-     </td>
-
-     <td>
-       ${fmt(t.entry)}
-     </td>
-
-     <td>
-       ${fmt(t.exit)}
-     </td>
-
-     <td class="${
-       t.result==="WIN"
-         ?"win"
-         :"loss"
-     }">
-       ${t.result}
-     </td>
-
-     <td class="${
-       t.pnl>=0
-         ?"win"
-         :"loss"
-     }">
-       ${t.pnl.toFixed(4)}
-     </td>
-
-   `;
-
-
-   tbody.appendChild(tr);
-
- }
-
-}
-
-
-/* ==========================================================
- UPDATE
-========================================================== */
-
-async function update(){
-
- try{
-
-   await getPrice();
-
-   updateCandle();
-
-
-   const st=
-     calculateSupertrend(
-       candles
-     );
-
-
-   if(!st)
-     return;
-
-
-   $("price").textContent=
-     fmt(livePrice);
-
-
-   $("st").textContent=
-     st.direction+
-     " · "+
-     fmt(st.line);
-
-
-   $("signal").textContent=
-     st.direction;
-
-   $("signal").className=
-     "value "+
-     (
-       st.direction==="BUY"
-         ?"buy"
-         :"sell"
-     );
-
-
-   /*
-      Prima determinăm direcția.
-      Nu deschidem tranzacție la prima încărcare.
-   */
-
-   if(lastSignal===null){
-
-     lastSignal=
-       st.direction;
-
-   }
-
-   else if(
-     st.direction!==lastSignal
-   ){
-
-     lastSignal=
-       st.direction;
-
-     openTrade(
-       st.direction,
-       st
-     );
-
-   }
-
-
-   checkTrade();
-
-   renderTrade();
-
-   renderStats();
-
-
-   status(
-     "🟢 LIVE · XAU/USD · 15M · update 5s",
-     "#43e39b"
-   );
-
-
- }catch(e){
-
-   status(
-     "🔴 "+e.message,
-     "#ff6677"
-   );
-
-   console.error(e);
-
- }
-
-}
-
-
-/* ==========================================================
- START
-========================================================== */
-
-async function start(){
-
- if(
-   !API_KEY ||
-   API_KEY==="PUNE_AICI_CHEIA_TWELVE_DATA_NOUA"
- ){
-
-   status(
-     "Introdu cheia nouă în constanta API_KEY.",
-     "#ff6677"
-   );
-
-   return;
-
- }
-
-
- try{
-
-   status(
-     "Se încarcă XAU/USD...",
-     "#ffd34d"
-   );
-
-
-   await loadHistory();
-
-
-   const st=
-     calculateSupertrend(
-       candles
-     );
-
-
-   if(st)
-     lastSignal=
-       st.direction;
-
-
-   await update();
-
-
-   clearInterval(timer);
-
-   timer=
-     setInterval(
-       update,
-       UPDATE_MS
-     );
-
-
- }catch(e){
-
-   status(
-     "🔴 "+e.message,
-     "#ff6677"
-   );
-
- }
-
-}
-
-
-/* ==========================================================
- INIT
-========================================================== */
-
-renderStats();
-renderTrade();
-
-start();
-
-</script>
-
-</body>
-  </html>
+  $("sl

@@ -3,90 +3,142 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>XAU/USD Live Radar</title>
+<title>XAU/USD Live SuperTrend Radar</title>
 
 <style>
 *{box-sizing:border-box}
+
 body{
-  margin:0;
-  background:#070b12;
-  color:#edf2f7;
-  font-family:Arial,sans-serif
+    margin:0;
+    background:#070b12;
+    color:#eef3f8;
+    font-family:Arial,Helvetica,sans-serif;
 }
-.app{max-width:1050px;margin:auto;padding:10px}
+
+.app{
+    max-width:1050px;
+    margin:auto;
+    padding:12px;
+}
+
 .card{
-  background:#0d141f;
-  border:1px solid #24344a;
-  border-radius:15px;
-  padding:14px;
-  margin-bottom:10px
+    background:#0d141f;
+    border:1px solid #26374d;
+    border-radius:16px;
+    padding:16px;
+    margin-bottom:12px;
 }
-h1{margin:0;font-size:21px}
-h2{font-size:16px;margin:0 0 12px}
-.sub{color:#7d8ca0;font-size:11px;margin-top:5px}
-.status{font-size:12px;font-weight:bold;margin-top:9px}
+
+h1{
+    margin:0;
+    font-size:24px;
+}
+
+h2{
+    margin:0 0 14px;
+    font-size:18px;
+}
+
+.sub{
+    margin-top:7px;
+    color:#8190a4;
+    font-size:12px;
+}
+
+.status{
+    margin-top:12px;
+    font-weight:900;
+}
+
+.green{color:#43e39b}
+.red{color:#ff6577}
+.yellow{color:#ffd34d}
+.white{color:#eef3f8}
+
 .grid{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:8px
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:9px;
 }
-.tradegrid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:8px
-}
+
 .box{
-  background:#101a28;
-  border:1px solid #223249;
-  border-radius:10px;
-  padding:11px
+    background:#101a28;
+    border:1px solid #26374d;
+    border-radius:11px;
+    padding:13px;
+    min-height:82px;
 }
+
 .label{
-  color:#7e8da0;
-  font-size:9px;
-  text-transform:uppercase
+    color:#7e8da1;
+    font-size:10px;
+    text-transform:uppercase;
 }
+
 .value{
-  margin-top:5px;
-  font-size:20px;
-  font-weight:900
+    margin-top:7px;
+    font-size:22px;
+    font-weight:900;
 }
-.buy{color:#45e39d}
-.sell{color:#ff6577}
-.wait{color:#ffd34d}
+
+.big{
+    font-size:28px;
+}
+
 .notice{
-  margin-top:10px;
-  padding:10px;
-  border-radius:9px;
-  background:#111b29;
-  border:1px solid #29394f;
-  font-size:11px
+    margin-top:12px;
+    padding:12px;
+    border-radius:10px;
+    background:#101a28;
+    border:1px solid #26374d;
+    font-size:12px;
+    word-break:break-word;
 }
-.ok{color:#45e39d}
-.err{color:#ff6577}
-table{
-  width:100%;
-  border-collapse:collapse;
-  font-size:10px
-}
-th,td{
-  padding:7px 3px;
-  text-align:center;
-  border-bottom:1px solid #202c3d
-}
-th{color:#7d8ca0}
+
 button{
-  border:0;
-  border-radius:8px;
-  padding:10px 14px;
-  margin-top:8px;
-  background:#1769e8;
-  color:white;
-  font-weight:bold
+    border:0;
+    border-radius:9px;
+    padding:11px 16px;
+    background:#1769e8;
+    color:white;
+    font-weight:bold;
+    margin-top:10px;
 }
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:11px;
+}
+
+th,td{
+    padding:8px 4px;
+    border-bottom:1px solid #202d3f;
+    text-align:center;
+}
+
+th{
+    color:#8190a4;
+}
+
 @media(max-width:700px){
-  .grid{grid-template-columns:1fr 1fr}
-  .tradegrid{grid-template-columns:1fr 1fr}
+    .grid{
+        grid-template-columns:1fr 1fr;
+    }
+}
+
+@media(max-width:430px){
+    .grid{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .value{
+        font-size:19px;
+    }
+
+    .big{
+        font-size:25px;
+    }
 }
 </style>
 </head>
@@ -96,16 +148,21 @@ button{
 <div class="app">
 
 <div class="card">
-<h1>⚡ XAU/USD LIVE RADAR</h1>
-<div class="sub">15M · SUPERTREND · PAPER TRADING · UPDATE 5 SEC</div>
 
-<div id="status" class="status wait">
-🟡 Se conectează...
+<h1>⚡ XAU/USD LIVE RADAR</h1>
+
+<div class="sub">
+15M · SUPERTREND · PAPER TRADING · UPDATE 5 SEC
+</div>
+
+<div id="status" class="status yellow">
+🟡 PORNIRE...
 </div>
 
 <div id="updated" class="sub">
 Ultimul update: —
 </div>
+
 </div>
 
 
@@ -115,17 +172,17 @@ Ultimul update: —
 
 <div class="box">
 <div class="label">XAU/USD</div>
-<div id="price" class="value">—</div>
+<div id="price" class="value big">—</div>
 </div>
 
 <div class="box">
 <div class="label">SEMNAL</div>
-<div id="signal" class="value wait">WAIT</div>
+<div id="signal" class="value yellow">WAIT</div>
 </div>
 
 <div class="box">
 <div class="label">SUPERTREND</div>
-<div id="supertrend" class="value wait">WAIT</div>
+<div id="trend" class="value yellow">WAIT</div>
 </div>
 
 <div class="box">
@@ -135,8 +192,8 @@ Ultimul update: —
 
 </div>
 
-<div id="notice" class="notice">
-Se conectează la Gold API...
+<div id="apiMessage" class="notice">
+Pornesc conexiunea...
 </div>
 
 </div>
@@ -146,7 +203,7 @@ Se conectează la Gold API...
 
 <h2>📌 PAPER TRADE</h2>
 
-<div class="tradegrid">
+<div class="grid">
 
 <div class="box">
 <div class="label">ENTRY</div>
@@ -175,10 +232,25 @@ Se conectează la Gold API...
 
 <div class="box">
 <div class="label">DIRECȚIE</div>
-<div id="direction" class="value wait">—</div>
+<div id="direction" class="value yellow">—</div>
+</div>
+
+<div class="box">
+<div class="label">STATUS</div>
+<div id="tradeStatus" class="value yellow">WAIT</div>
+</div>
+
+<div class="box">
+<div class="label">CANDLE 15M</div>
+<div id="candle" class="value">—</div>
 </div>
 
 </div>
+
+<div class="notice">
+⚠️ PAPER TRADING ONLY — nu se trimite nicio comandă la broker.
+</div>
+
 </div>
 
 
@@ -195,12 +267,12 @@ Se conectează la Gold API...
 
 <div class="box">
 <div class="label">WIN</div>
-<div id="wins" class="value buy">0</div>
+<div id="wins" class="value green">0</div>
 </div>
 
 <div class="box">
 <div class="label">LOSS</div>
-<div id="losses" class="value sell">0</div>
+<div id="losses" class="value red">0</div>
 </div>
 
 <div class="box">
@@ -208,14 +280,8 @@ Se conectează la Gold API...
 <div id="winrate" class="value">0%</div>
 </div>
 
-</div>
-
-<br>
-
-<div class="grid">
-
 <div class="box">
-<div class="label">LOSS LA RÂND</div>
+<div class="label">LOSS CONSECUTIVE</div>
 <div id="streak" class="value">0</div>
 </div>
 
@@ -230,11 +296,12 @@ Se conectează la Gold API...
 </div>
 
 <div class="box">
-<div class="label">ACTIV</div>
+<div class="label">TRADE ACTIV</div>
 <div id="active" class="value">0</div>
 </div>
 
 </div>
+
 </div>
 
 
@@ -243,7 +310,9 @@ Se conectează la Gold API...
 <h2>📋 ISTORIC</h2>
 
 <table>
+
 <thead>
+
 <tr>
 <th>#</th>
 <th>TIME</th>
@@ -253,9 +322,11 @@ Se conectează la Gold API...
 <th>EXIT</th>
 <th>RESULT</th>
 </tr>
+
 </thead>
 
 <tbody id="history"></tbody>
+
 </table>
 
 </div>
@@ -263,14 +334,14 @@ Se conectează la Gold API...
 
 <div class="card">
 
-<h2>🔌 CONEXIUNE</h2>
+<h2>🔌 DIAGNOSTIC</h2>
 
-<div id="connection" class="notice">
-Testare Gold API...
+<div id="diagnostic" class="notice">
+Se testează Gold API...
 </div>
 
-<button onclick="refreshNow()">
-🔄 RECONNECT
+<button onclick="manualRefresh()">
+🔄 REÎNCEARCĂ ACUM
 </button>
 
 </div>
@@ -285,15 +356,23 @@ Testare Gold API...
 ===================================================== */
 
 const GOLD_API =
-"https://api.gold-api.com/price/XAU";
+    "https://api.gold-api.com/price/XAU";
+
+const PROXY_1 =
+    "https://api.allorigins.win/raw?url=" +
+    encodeURIComponent(GOLD_API);
+
+const PROXY_2 =
+    "https://corsproxy.io/?" +
+    encodeURIComponent(GOLD_API);
 
 const UPDATE_MS = 5000;
 
 const ATR_PERIOD = 14;
 
-const ST_PERIOD = 10;
+const SUPERTREND_PERIOD = 10;
 
-const ST_MULTIPLIER = 3;
+const SUPERTREND_MULTIPLIER = 3;
 
 const SL_ATR = 2;
 
@@ -303,7 +382,7 @@ const BASE_LOT = 0.01;
 
 const LOT_STEP = 0.01;
 
-const MAX_LOT = 0.10;
+const MAX_LOT = 1.00;
 
 
 /* =====================================================
@@ -312,9 +391,13 @@ const MAX_LOT = 0.10;
 
 let price = null;
 
-let lastPrice = null;
+let previousPrice = null;
 
-let prices = [];
+let samples = [];
+
+let candles = [];
+
+let currentCandle = null;
 
 let activeTrade = null;
 
@@ -328,153 +411,353 @@ let lossStreak = 0;
 
 let pnl = 0;
 
-let tradeId = 0;
+let tradeNumber = 0;
 
 let history = [];
 
+let lastFetchMethod = "—";
+
 
 /* =====================================================
-   DOM
+   HELPERS
 ===================================================== */
 
 function $(id){
     return document.getElementById(id);
 }
 
+function number(v){
 
-/* =====================================================
-   FORMAT
-===================================================== */
+    const n = Number(v);
 
-function fmt(n,d=2){
+    return Number.isFinite(n)
+        ? n
+        : null;
+}
 
-    if(
-        n === null ||
-        n === undefined ||
-        !Number.isFinite(Number(n))
-    ){
+function fmt(v,d=2){
+
+    const n = number(v);
+
+    if(n === null){
         return "—";
     }
 
-    return Number(n).toFixed(d);
+    return n.toFixed(d);
+}
+
+function esc(v){
+
+    return String(v)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
 }
 
 
 /* =====================================================
-   GOLD API
+   GOLD API DIRECT
 ===================================================== */
 
-async function fetchGold(){
+async function directGold(){
+
+    const controller =
+        new AbortController();
+
+    const timeout =
+        setTimeout(
+            () => controller.abort(),
+            7000
+        );
 
     try{
 
         const response =
             await fetch(
-                GOLD_API +
-                "?_=" +
-                Date.now(),
+                GOLD_API,
                 {
                     method:"GET",
-                    cache:"no-store"
+                    mode:"cors",
+                    cache:"no-store",
+                    signal:controller.signal,
+                    headers:{
+                        "Accept":
+                            "application/json"
+                    }
                 }
             );
+
+        clearTimeout(timeout);
 
         if(!response.ok){
 
             throw new Error(
-                "HTTP " +
+                "Gold API HTTP " +
                 response.status
             );
-
         }
 
         const data =
             await response.json();
 
         const p =
-            Number(data.price);
+            number(data.price);
 
-        if(!Number.isFinite(p)){
+        if(p === null){
 
             throw new Error(
-                "Preț invalid"
+                "Gold API nu a trimis price"
             );
-
         }
 
-        lastPrice = price;
-
-        price = p;
-
-        prices.push({
-            time:Date.now(),
-            price:p
-        });
-
-        if(prices.length > 1000){
-            prices.shift();
-        }
-
-        $("price").textContent =
-            fmt(p);
-
-        $("status").textContent =
-            "🟢 LIVE · XAU/USD";
-
-        $("status").className =
-            "status buy";
-
-        $("updated").textContent =
-            "Ultimul update: " +
-            new Date()
-                .toLocaleTimeString();
-
-        $("notice").className =
-            "notice ok";
-
-        $("notice").textContent =
-            "🟢 Gold API conectat · $" +
-            fmt(p);
-
-        $("connection").className =
-            "notice ok";
-
-        $("connection").textContent =
-            "🟢 CONECTAT · Gold API";
-
-        return true;
+        return {
+            price:p,
+            updatedAt:
+                data.updatedAt ||
+                null,
+            method:"DIRECT GOLD API"
+        };
 
     }catch(error){
 
-        console.error(
-            "Gold API:",
-            error
+        clearTimeout(timeout);
+
+        throw error;
+    }
+}
+
+
+/* =====================================================
+   PROXY FALLBACK
+===================================================== */
+
+async function proxyGold(url,name){
+
+    const controller =
+        new AbortController();
+
+    const timeout =
+        setTimeout(
+            () => controller.abort(),
+            10000
         );
 
-        /*
-          Nu afișăm "DECONNECTED".
-          Facem reconnect automat.
-        */
+    try{
 
-        $("status").textContent =
-            "🟡 RECONNECTING...";
+        const response =
+            await fetch(
+                url,
+                {
+                    method:"GET",
+                    cache:"no-store",
+                    signal:controller.signal
+                }
+            );
 
-        $("status").className =
-            "status wait";
+        clearTimeout(timeout);
 
-        $("notice").className =
-            "notice";
+        if(!response.ok){
 
-        $("notice").textContent =
-            "🟡 Conexiune temporar indisponibilă · retry automat";
+            throw new Error(
+                name +
+                " HTTP " +
+                response.status
+            );
+        }
 
-        $("connection").className =
-            "notice";
+        const data =
+            await response.json();
 
-        $("connection").textContent =
-            "🟡 Reconnecting...";
+        const p =
+            number(data.price);
 
-        return false;
+        if(p === null){
+
+            throw new Error(
+                name +
+                " nu a returnat price"
+            );
+        }
+
+        return {
+            price:p,
+            updatedAt:
+                data.updatedAt ||
+                null,
+            method:name
+        };
+
+    }catch(error){
+
+        clearTimeout(timeout);
+
+        throw error;
+    }
+}
+
+
+/* =====================================================
+   FETCH PRICE
+===================================================== */
+
+async function fetchPrice(){
+
+    const errors = [];
+
+
+    /*
+       1. Încercăm direct Gold API.
+    */
+
+    try{
+
+        const result =
+            await directGold();
+
+        lastFetchMethod =
+            result.method;
+
+        return result;
+
+    }catch(error){
+
+        errors.push(
+            "DIRECT: " +
+            error.message
+        );
+    }
+
+
+    /*
+       2. Fallback proxy.
+    */
+
+    try{
+
+        const result =
+            await proxyGold(
+                PROXY_1,
+                "ALLORIGINS"
+            );
+
+        lastFetchMethod =
+            result.method;
+
+        return result;
+
+    }catch(error){
+
+        errors.push(
+            "ALLORIGINS: " +
+            error.message
+        );
+    }
+
+
+    /*
+       3. Al doilea fallback.
+    */
+
+    try{
+
+        const result =
+            await proxyGold(
+                PROXY_2,
+                "CORSPROXY"
+            );
+
+        lastFetchMethod =
+            result.method;
+
+        return result;
+
+    }catch(error){
+
+        errors.push(
+            "CORSPROXY: " +
+            error.message
+        );
+    }
+
+
+    throw new Error(
+        errors.join(" | ")
+    );
+}
+
+
+/* =====================================================
+   15 MIN CANDLES
+===================================================== */
+
+function candleTime(){
+
+    const now =
+        Date.now();
+
+    const size =
+        15 * 60 * 1000;
+
+    return Math.floor(
+        now / size
+    ) * size;
+}
+
+
+function updateCandle(p){
+
+    const t =
+        candleTime();
+
+    if(
+        !currentCandle ||
+        currentCandle.time !== t
+    ){
+
+        if(currentCandle){
+
+            candles.push(
+                currentCandle
+            );
+
+            if(candles.length > 300){
+
+                candles.shift();
+
+            }
+        }
+
+        currentCandle = {
+
+            time:t,
+
+            open:p,
+
+            high:p,
+
+            low:p,
+
+            close:p
+        };
+
+    }else{
+
+        currentCandle.high =
+            Math.max(
+                currentCandle.high,
+                p
+            );
+
+        currentCandle.low =
+            Math.min(
+                currentCandle.low,
+                p
+            );
+
+        currentCandle.close =
+            p;
     }
 }
 
@@ -486,38 +769,60 @@ async function fetchGold(){
 function calculateATR(){
 
     if(
-        prices.length <
+        candles.length <
         ATR_PERIOD + 1
     ){
+
         return null;
     }
 
-    const data =
-        prices
-        .slice(
+    const arr =
+        candles.slice(
             -(ATR_PERIOD + 1)
-        )
-        .map(x => x.price);
+        );
 
-    let sum = 0;
+    let trs = [];
 
     for(
         let i=1;
-        i<data.length;
+        i<arr.length;
         i++
     ){
 
-        sum +=
-            Math.abs(
-                data[i] -
-                data[i-1]
+        const c =
+            arr[i];
+
+        const prev =
+            arr[i-1];
+
+        const tr =
+            Math.max(
+
+                c.high -
+                c.low,
+
+                Math.abs(
+                    c.high -
+                    prev.close
+                ),
+
+                Math.abs(
+                    c.low -
+                    prev.close
+                )
             );
+
+        trs.push(tr);
     }
 
-    return (
-        sum /
-        ATR_PERIOD
-    );
+    if(!trs.length){
+        return null;
+    }
+
+    return trs.reduce(
+        (a,b)=>a+b,
+        0
+    ) / trs.length;
 }
 
 
@@ -528,71 +833,157 @@ function calculateATR(){
 function calculateSupertrend(){
 
     if(
-        prices.length <
-        ST_PERIOD * 3
+        candles.length <
+        SUPERTREND_PERIOD + 2
     ){
-        return "WAIT";
+
+        return {
+            signal:"WAIT",
+            line:null
+        };
     }
 
     const data =
-        prices
-        .slice(
-            -(ST_PERIOD * 3)
-        )
-        .map(x => x.price);
+        candles.slice(
+            -(SUPERTREND_PERIOD + 1)
+        );
 
-    const recent =
-        data.slice(-ST_PERIOD);
+    let direction = 0;
 
-    const average =
-        recent.reduce(
-            (a,b) => a+b,
-            0
-        ) /
-        recent.length;
+    let line = null;
 
-    const volatility =
-        recent.reduce(
-            (a,b) =>
-                a +
+    for(
+        let i=1;
+        i<data.length;
+        i++
+    ){
+
+        const c =
+            data[i];
+
+        const prev =
+            data[i-1];
+
+        const atr =
+            averageRange(
+                data,
+                i
+            );
+
+        if(
+            atr === null
+        ){
+            continue;
+        }
+
+        const hl2 =
+            (c.high + c.low) / 2;
+
+        const upper =
+            hl2 +
+            SUPERTREND_MULTIPLIER *
+            atr;
+
+        const lower =
+            hl2 -
+            SUPERTREND_MULTIPLIER *
+            atr;
+
+        if(
+            c.close >
+            upper
+        ){
+
+            direction = 1;
+
+            line = lower;
+
+        }else if(
+            c.close <
+            lower
+        ){
+
+            direction = -1;
+
+            line = upper;
+        }
+    }
+
+    if(direction > 0){
+
+        return {
+            signal:"BUY",
+            line
+        };
+
+    }
+
+    if(direction < 0){
+
+        return {
+            signal:"SELL",
+            line
+        };
+    }
+
+    return {
+        signal:"WAIT",
+        line:null
+    };
+}
+
+
+function averageRange(data,index){
+
+    const start =
+        Math.max(
+            1,
+            index -
+            SUPERTREND_PERIOD +
+            1
+        );
+
+    let total = 0;
+
+    let count = 0;
+
+    for(
+        let i=start;
+        i<=index;
+        i++
+    ){
+
+        const c =
+            data[i];
+
+        const p =
+            data[i-1];
+
+        total +=
+            Math.max(
+
+                c.high -
+                c.low,
+
                 Math.abs(
-                    b-average
+                    c.high -
+                    p.close
                 ),
-            0
-        ) /
-        recent.length;
 
-    const current =
-        data[data.length-1];
+                Math.abs(
+                    c.low -
+                    p.close
+                )
+            );
 
-    const previous =
-        data[data.length-2];
-
-    const upper =
-        average +
-        ST_MULTIPLIER *
-        volatility;
-
-    const lower =
-        average -
-        ST_MULTIPLIER *
-        volatility;
-
-    if(
-        current > upper &&
-        current > previous
-    ){
-        return "BUY";
+        count++;
     }
 
-    if(
-        current < lower &&
-        current < previous
-    ){
-        return "SELL";
+    if(!count){
+        return null;
     }
 
-    return "WAIT";
+    return total / count;
 }
 
 
@@ -602,41 +993,50 @@ function calculateSupertrend(){
 
 function calculateScore(signal){
 
-    if(signal === "WAIT"){
+    if(
+        signal === "WAIT"
+    ){
         return 50;
     }
 
-    if(prices.length < 30){
+    if(
+        candles.length < 20
+    ){
         return 50;
     }
-
-    const data =
-        prices
-        .slice(-30)
-        .map(x => x.price);
-
-    const movement =
-        Math.abs(
-            data[data.length-1] -
-            data[0]
-        );
 
     const atr =
         calculateATR();
 
-    if(!atr || atr <= 0){
+    if(
+        !atr ||
+        atr <= 0
+    ){
         return 50;
     }
 
+    const last =
+        candles[candles.length-1];
+
+    const previous =
+        candles[candles.length-2];
+
+    const move =
+        Math.abs(
+            last.close -
+            previous.close
+        );
+
     const strength =
-        movement / atr;
+        move / atr;
 
     return Math.round(
         Math.max(
             50,
             Math.min(
                 100,
-                50 + strength * 8
+                50 +
+                strength * 15
             )
         )
     );
@@ -674,24 +1074,26 @@ function openTrade(side){
     const atr =
         calculateATR();
 
-    if(!atr || atr <= 0){
+    if(
+        !atr ||
+        atr <= 0
+    ){
         return;
     }
 
     const entry =
         price;
 
-    const risk =
-        atr * SL_ATR;
-
     let sl;
+
     let tp;
 
     if(side === "BUY"){
 
         sl =
             entry -
-            risk;
+            atr *
+            SL_ATR;
 
         tp =
             entry +
@@ -702,7 +1104,8 @@ function openTrade(side){
 
         sl =
             entry +
-            risk;
+            atr *
+            SL_ATR;
 
         tp =
             entry -
@@ -712,7 +1115,7 @@ function openTrade(side){
 
     activeTrade = {
 
-        id:++tradeId,
+        id:++tradeNumber,
 
         time:new Date(),
 
@@ -749,23 +1152,34 @@ function checkTrade(){
     const t =
         activeTrade;
 
-    let result = null;
+    let result =
+        null;
 
-    if(t.side === "BUY"){
+    if(
+        t.side === "BUY"
+    ){
 
-        if(price <= t.sl){
+        if(
+            price <= t.sl
+        ){
             result = "LOSS";
-        }
-        else if(price >= t.tp){
+
+        }else if(
+            price >= t.tp
+        ){
             result = "WIN";
         }
 
     }else{
 
-        if(price >= t.sl){
+        if(
+            price >= t.sl
+        ){
             result = "LOSS";
-        }
-        else if(price <= t.tp){
+
+        }else if(
+            price <= t.tp
+        ){
             result = "WIN";
         }
     }
@@ -774,18 +1188,11 @@ function checkTrade(){
         return;
     }
 
-    const move =
+    const distance =
         Math.abs(
             price -
             t.entry
         );
-
-    const resultPnl =
-        (
-            result === "WIN"
-                ? move
-                : -move
-        ) * t.lot;
 
     if(result === "WIN"){
 
@@ -793,14 +1200,20 @@ function checkTrade(){
 
         lossStreak = 0;
 
+        pnl +=
+            distance *
+            t.lot;
+
     }else{
 
         losses++;
 
         lossStreak++;
-    }
 
-    pnl += resultPnl;
+        pnl -=
+            distance *
+            t.lot;
+    }
 
     history.unshift({
 
@@ -819,11 +1232,14 @@ function checkTrade(){
         result
     });
 
-    if(history.length > 100){
+    if(
+        history.length > 100
+    ){
         history.pop();
     }
 
-    activeTrade = null;
+    activeTrade =
+        null;
 
     renderHistory();
 }
@@ -836,17 +1252,29 @@ function checkTrade(){
 function renderTrade(){
 
     $("lot").textContent =
-        fmt(getLot());
+        activeTrade
+            ? fmt(activeTrade.lot)
+            : fmt(getLot());
 
     $("nextLot").textContent =
         fmt(getLot());
 
     if(!activeTrade){
 
-        $("entry").textContent = "—";
-        $("sl").textContent = "—";
-        $("tp").textContent = "—";
-        $("direction").textContent = "—";
+        $("entry").textContent =
+            "—";
+
+        $("sl").textContent =
+            "—";
+
+        $("tp").textContent =
+            "—";
+
+        $("direction").textContent =
+            "—";
+
+        $("tradeStatus").textContent =
+            "WAIT";
 
         return;
     }
@@ -869,221 +1297,33 @@ function renderTrade(){
     $("direction").textContent =
         activeTrade.side;
 
+    $("tradeStatus").textContent =
+        "OPEN";
+
     $("direction").className =
         "value " +
         (
             activeTrade.side === "BUY"
-                ? "buy"
-                : "sell"
+                ? "green"
+                : "red"
         );
+
+    $("tradeStatus").className =
+        "value yellow";
 }
 
 
 /* =====================================================
-   RENDER STATS
+   STATS
 ===================================================== */
 
 function renderStats(){
 
     const total =
-        wins + losses;
+        wins +
+        losses;
 
     const rate =
         total
-            ? wins / total * 100
-            : 0;
-
-    $("total").textContent =
-        total;
-
-    $("wins").textContent =
-        wins;
-
-    $("losses").textContent =
-        losses;
-
-    $("winrate").textContent =
-        rate.toFixed(1) +
-        "%";
-
-    $("streak").textContent =
-        lossStreak;
-
-    $("nextLot").textContent =
-        fmt(getLot());
-
-    $("pnl").textContent =
-        pnl.toFixed(4);
-
-    $("active").textContent =
-        activeTrade
-            ? "1"
-            : "0";
-}
-
-
-/* =====================================================
-   HISTORY
-===================================================== */
-
-function renderHistory(){
-
-    $("history").innerHTML = "";
-
-    history.forEach(t => {
-
-        const row =
-            document.createElement("tr");
-
-        row.innerHTML = `
-            <td>${t.id}</td>
-            <td>${t.time.toLocaleTimeString()}</td>
-            <td class="${
-                t.side === "BUY"
-                    ? "buy"
-                    : "sell"
-            }">
-                ${t.side}
-            </td>
-            <td>${fmt(t.lot)}</td>
-            <td>${fmt(t.entry)}</td>
-            <td>${fmt(t.exit)}</td>
-            <td class="${
-                t.result === "WIN"
-                    ? "buy"
-                    : "sell"
-            }">
-                ${t.result}
-            </td>
-        `;
-
-        $("history")
-            .appendChild(row);
-
-    });
-}
-
-
-/* =====================================================
-   RADAR
-===================================================== */
-
-async function radar(){
-
-    const ok =
-        await fetchGold();
-
-    if(!ok){
-
-        renderStats();
-
-        return;
-    }
-
-    const signal =
-        calculateSupertrend();
-
-    const score =
-        calculateScore(
-            signal
-        );
-
-    $("signal").textContent =
-        signal;
-
-    $("signal").className =
-        "value " +
-        (
-            signal === "BUY"
-                ? "buy"
-                : signal === "SELL"
-                    ? "sell"
-                    : "wait"
-        );
-
-    $("supertrend").textContent =
-        signal;
-
-    $("supertrend").className =
-        "value " +
-        (
-            signal === "BUY"
-                ? "buy"
-                : signal === "SELL"
-                    ? "sell"
-                    : "wait"
-        );
-
-    $("score").textContent =
-        score;
-
-    $("atr").textContent =
-        fmt(
-            calculateATR()
-        );
-
-    /*
-      Nu deschidem trade la fiecare
-      update de 5 secunde.
-    */
-
-    if(
-        signal !== "WAIT" &&
-        signal !== lastSignal &&
-        !activeTrade
-    ){
-
-        openTrade(signal);
-    }
-
-    lastSignal =
-        signal;
-
-    checkTrade();
-
-    renderTrade();
-
-    renderStats();
-}
-
-
-/* =====================================================
-   MANUAL RECONNECT
-===================================================== */
-
-async function refreshNow(){
-
-    $("status").textContent =
-        "🟡 RECONNECTING...";
-
-    $("connection").textContent =
-        "🟡 Testez Gold API...";
-
-    await radar();
-}
-
-
-/* =====================================================
-   START
-===================================================== */
-
-async function start(){
-
-    await radar();
-
-    /*
-      LIVE la fiecare 5 secunde.
-    */
-
-    setInterval(
-        radar,
-        UPDATE_MS
-    );
-}
-
-start();
-
-</script>
-
-</body>
-</html>
+            ? wins /
+ 
